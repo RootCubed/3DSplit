@@ -1,7 +1,7 @@
-SplitLive/romfs/
-SplitLive/build/
+3DSplits/romfs/
+3DSplits/build/
 converter/.vscode/
-SplitLive/.vscode/
+3DSplits/.vscode/
 *.3dsx
 *.elf
 *.smdh
