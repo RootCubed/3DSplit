@@ -5,5 +5,5 @@ converter/.vscode/
 *.3dsx
 *.elf
 *.smdh
-*.sls
+*.spl
 *.lss

@@ -11,26 +11,6 @@
 #define START_SPLIT_ICON 0
 #define RESET_ICON 1
 
-char *testSplitNames[] = {
-    "1-1",
-    "1-2",
-    "1-3",
-    "1-C",
-    "5-1",
-    "5-3",
-    "5-T",
-    "5-4",
-    "5-G",
-    "5-C",
-    "8-1",
-    "8-2",
-    "8-7",
-    "8-A",
-    "Bowser",
-    "ultra gay bowser 2.0",
-    "69 coins LUL"
-};
-
 bool isSelecting = true;
 bool foundSplits = false;
 char splitFiles[4096][4096];
@@ -51,8 +31,6 @@ SLS splitFile;
 static void sceneInit()
 {
     SL_Timer_CreateTimer(&mainTimer);
-
-    //SL_Timer_LoadSplitNames(&mainTimer, sizeof(testSplitNames)/sizeof(testSplitNames[0]), testSplitNames);
 
     textBuf = C2D_TextBufNew(256);
 
@@ -119,6 +97,43 @@ void drawFiles(int numFiles, char text[4096][4096], C2D_TextBuf textBuf) {
     }
 }
 
+int getBufferLine(int start, char (*result)[1024], u8 **buffer) {
+    int i = 0;
+    char currChar = (char) (*buffer)[start];
+    while (currChar != '\n') {
+        (*result)[i++] = currChar;
+        currChar = (char) (*buffer)[++start];
+    }
+    (*result)[i] = '\0';
+    printf("line at %d: %s\n", start - i, *result);
+    return ++start;
+}
+
+void parseSplits() {
+    int pos = 0;
+    pos = getBufferLine(pos, &splitFile.gameName, &loadedSplits);
+    pos = getBufferLine(pos, &splitFile.category, &loadedSplits);
+    char temp[1024];
+    pos = getBufferLine(pos, &temp, &loadedSplits);
+    splitFile.startedRuns = atoi(temp);
+    pos = getBufferLine(pos, &temp, &loadedSplits);
+    splitFile.numSplits = atoi(temp);
+    for (int i = 0; i < splitFile.numSplits; i++) {
+        pos = getBufferLine(pos, &(splitFile.splitNames[i]), &loadedSplits);
+    }
+    for (int i = 0; i < splitFile.numSplits; i++) {
+        pos = getBufferLine(pos, &temp, &loadedSplits);
+        splitFile.PBSplits[i] = atoi(temp);
+    }
+    for (int i = 0; i < splitFile.numSplits; i++) {
+        pos = getBufferLine(pos, &temp, &loadedSplits);
+        splitFile.goldSegments[i] = atoi(temp);
+    }
+    SL_Timer_LoadFromSplitFile(&mainTimer, &splitFile);
+    // free file
+    free(loadedSplits);
+}
+
 void loadSplits(const char *path) {
     char realPath[256];
     strcpy(realPath, "/splits/");
@@ -138,19 +153,34 @@ void loadSplits(const char *path) {
         fread(loadedSplits, 1, size, file);
 
         fclose(file);
+
+        parseSplits();
     }
 }
 
-int getBufferLine(int start, char (*result)[1024], u8 **buffer) {
-    int i = 0;
-    char currChar = (char) (*buffer)[start];
-    while (currChar != '\n') {
-        (*result)[i++] = currChar;
-        currChar = (char) (*buffer)[++start];
+void saveSplits(const char *path) {
+    SL_Timer_Reset(&mainTimer); // save current run
+    SL_Timer_SaveToSplitFile(&mainTimer, &splitFile);
+    char realPath[256];
+    strcpy(realPath, "/splits/");
+    strcat(realPath, path);
+    FILE *file = fopen(realPath, "w");
+	if (file != NULL) {
+    	fprintf(file, "%s\n", splitFile.gameName);
+        fprintf(file, "%s\n", splitFile.category);
+        fprintf(file, "%d\n", splitFile.startedRuns);
+        fprintf(file, "%d\n", splitFile.numSplits);
+        for (int i = 0; i < splitFile.numSplits; i++) {
+            fprintf(file, "%s\n", splitFile.splitNames[i]);
+        }
+        for (int i = 0; i < splitFile.numSplits; i++) {
+            fprintf(file, "%lld\n", splitFile.PBSplits[i]);
+        }
+        for (int i = 0; i < splitFile.numSplits; i++) {
+            fprintf(file, "%lld\n", splitFile.goldSegments[i]);
+        }
+        fclose(file);
     }
-    (*result)[i] = '\0';
-    printf("line at %d: %s\n", start - i, *result);
-    return ++start;
 }
 
 static void sceneRender()
@@ -191,35 +221,14 @@ int main(int argc, char* argv[])
 
         // Respond to user input
         u32 kDown = hidKeysDown();
-        if (kDown & KEY_START)
-        	break; // break in order to return to hbmenu
+        if (kDown & KEY_START) {
+            saveSplits(splitFiles[selectedFile]);
+            break;
+        }
 
         if (kDown & KEY_A) {
             if (isSelecting && foundSplits) {
                 loadSplits(splitFiles[selectedFile]);
-                // parse file
-                int pos = 0;
-                pos = getBufferLine(pos, &splitFile.gameName, &loadedSplits);
-                pos = getBufferLine(pos, &splitFile.category, &loadedSplits);
-                char temp[1024];
-                pos = getBufferLine(pos, &temp, &loadedSplits);
-                splitFile.startedRuns = atoi(temp);
-                pos = getBufferLine(pos, &temp, &loadedSplits);
-                splitFile.numSplits = atoi(temp);
-                for (int i = 0; i < splitFile.numSplits; i++) {
-                    pos = getBufferLine(pos, &(splitFile.splitNames[i]), &loadedSplits);
-                }
-                for (int i = 0; i < splitFile.numSplits; i++) {
-                    pos = getBufferLine(pos, &temp, &loadedSplits);
-                    splitFile.PBSplits[i] = atoi(temp);
-                }
-                for (int i = 0; i < splitFile.numSplits; i++) {
-                    pos = getBufferLine(pos, &temp, &loadedSplits);
-                    splitFile.goldSegments[i] = atoi(temp);
-                }
-                SL_Timer_LoadFromSplitFile(&mainTimer, &splitFile);
-                // free file
-                free(loadedSplits);
                 isSelecting = false;
             } else if (!isSelecting) {
                 SL_Timer_StartSplit(&mainTimer);
@@ -229,6 +238,15 @@ int main(int argc, char* argv[])
         if (kDown & (KEY_L | KEY_R)) {
             SL_Timer_Reset(&mainTimer);
         }
+
+        if (kDown & KEY_B) {
+            SL_Timer_Undo(&mainTimer);
+        }
+
+        if (kDown & KEY_X) {
+            SL_Timer_Skip(&mainTimer);
+        }
+
 
         if (kDown & KEY_DUP) {
             if (isSelecting && foundSplits) {
@@ -289,7 +307,7 @@ int main(int argc, char* argv[])
         C2D_SceneBegin(bot);
         if (isSelecting) {
             if (!foundSplits) {
-                drawError("No splits found.\nMake sure you placed them in /splits!\nThis empty file will not be saved once you close SplitLive!", textBuf);
+                drawError("No splits found.\nMake sure you placed them in /splits!\n3DSplits has created a temporary file\nwhich will not be saved after quitting!\n\nConverter for splits:\nletsplentendo-ch.github.io", textBuf);
             } else {
                 drawFiles(numFoundSplits, splitFiles, textBuf);
             }

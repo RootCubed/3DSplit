@@ -19,7 +19,8 @@
 void SL_Timer_CreateTimer(Timer *t) {
     t->state = STATE_RESET;
     t->currSplit = -1;
-    t->numSplits = 0;
+    t->numSplits = 1;
+    strcpy(t->splitNames[0], "Empty split file");
     t->scroll = 0;
 }
 
@@ -98,6 +99,7 @@ void SL_Timer_Draw(Timer *t, C2D_TextBuf textBuf) {
 }
 
 void SL_Timer_LoadFromSplitFile(Timer *t, SLS *s) {
+    t->startedRuns = s->startedRuns;
     t->numSplits = s->numSplits;
     for(int i = 0; i < t->numSplits; i++) {
         strcpy(t->splitNames[i], s->splitNames[i]);
@@ -106,10 +108,21 @@ void SL_Timer_LoadFromSplitFile(Timer *t, SLS *s) {
     }
 }
 
+void SL_Timer_SaveToSplitFile(Timer *t, SLS *s) {
+    s->startedRuns = t->startedRuns;
+    s->numSplits = t->numSplits;
+    for(int i = 0; i < t->numSplits; i++) {
+        strcpy(s->splitNames[i], t->splitNames[i]);
+        s->PBSplits[i] = t->PBSplits[i];
+        s->goldSegments[i] = t->goldSegments[i];
+    }
+}
+
 void SL_Timer_StartSplit(Timer *t) {
     switch (t->state) {
         case STATE_RESET:
             t->state = STATE_RUNNING;
+            t->startedRuns++;
             t->startTime = osGetTime();
             t->scroll = 0;
             break;
@@ -137,8 +150,27 @@ void SL_Timer_Reset(Timer *t) {
             t->PBSplits[i] = t->currSplits[i];
         }
     }
+    for (int i = 0; i < t->numSplits; i++) {
+        long long segment = t->currSplits[i + 1] - t->currSplits[i];
+        if (segment < t->goldSegments[i] && t->currSplits[i] > 0 && t->currSplits[i + 1] > 0) {
+            t->goldSegments[i] = segment;
+        }
+    }
     t->currSplit = -1;
     t->state = STATE_RESET;
+}
+
+void SL_Timer_Undo(Timer *t) {
+    if (t->state == STATE_RUNNING && t->currSplit > -1) {
+        t->currSplit--;
+    }
+}
+
+void SL_Timer_Skip(Timer *t) {
+    if (t->state == STATE_RUNNING && t->currSplit < t->numSplits) {
+        t->currSplit++;
+        t->currSplits[t->currSplit] = 0;
+    }
 }
 
 char* SL_Timer_GetMainTimerText(Timer *t) {
@@ -203,8 +235,12 @@ char* SL_Timer_GetCurrSplitText(Timer *t, int segment) {
     char *res = malloc(sizeof(char) * 256);
 
     if (segment <= t->currSplit) {
-        u64 segSplit = t->currSplits[segment];
-        u64ToTime(res, segSplit);
+        if (t->currSplits[segment] > 0) {
+            u64 segSplit = t->currSplits[segment];
+            u64ToTime(res, segSplit);
+        } else {
+            strcpy(res, "- ");
+        }
     } else {
         if (t->PBSplits[segment] > 0) {
             u64 currPBSplit = t->PBSplits[segment];

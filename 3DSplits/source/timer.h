@@ -14,6 +14,7 @@
 struct SplitLiveTimer;
 
 typedef struct SplitLiveTimer {
+    int startedRuns;
     int state;
     int scroll;
     u32 timerColor;
@@ -26,7 +27,6 @@ typedef struct SplitLiveTimer {
     u64 goldSegments[MAX_SPLITS];
     u64 PBSplits[MAX_SPLITS];
     u64 currSplits[MAX_SPLITS];
-    int decimalPrecision;
 } Timer;
 
 
@@ -36,9 +36,15 @@ void SL_Timer_Draw(Timer *t, C2D_TextBuf textBuf);
 
 void SL_Timer_LoadFromSplitFile(Timer *t, SLS *s);
 
+void SL_Timer_SaveToSplitFile(Timer *t, SLS *s);
+
 void SL_Timer_StartSplit(Timer *t);
 
 void SL_Timer_Reset(Timer *t);
+
+void SL_Timer_Undo(Timer *t);
+
+void SL_Timer_Skip(Timer *t);
 
 char* SL_Timer_GetMainTimerText(Timer *t);
 
