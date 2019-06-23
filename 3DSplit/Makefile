@@ -41,7 +41,7 @@ GRAPHICS	:=	gfx
 ROMFS		:=	romfs
 GFXBUILD	:=	$(ROMFS)/gfx
 
-APP_TITLE		:=	3DSplits
+APP_TITLE		:=	3DSplit
 APP_DESCRIPTION	:=	A simple speedrunning timer for the Nintendo 3DS.
 APP_AUTHOR		:=	LetsPlentendo
 
