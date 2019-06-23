@@ -1,5 +1,6 @@
 # 3DSplit
 A speedrunning timer for the (New) Nintendo 3DS (XL).
+
 ![Screenshot of the tool.](preview.bmp)
 
 ## How to use
