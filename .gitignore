@@ -1,0 +1,9 @@
+SplitLive/romfs/
+SplitLive/build/
+converter/.vscode/
+SplitLive/.vscode/
+*.3dsx
+*.elf
+*.smdh
+*.sls
+*.lss

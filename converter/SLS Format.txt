@@ -1,0 +1,25 @@
+Game Title
+Category
+Number of started runs
+Number of Segments
+Segment Name 1
+Segment Name 2
+Segment Name 3
+.
+.
+.
+Segment Name n
+PB Split 1
+PB Split 2
+PB Split 3
+.
+.
+.
+PB Split n
+Gold Split 1
+Gold Split 2
+Gold Split 3
+.
+.
+.
+Gold Split n

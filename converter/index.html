@@ -1,0 +1,47 @@
+<html>
+<head>
+	<script src="script.js"></script>
+	<style>
+		body {
+			font-family: Verdana;
+		}
+		.pending {
+			color: #888;
+		}
+		.complete {
+			color: #1e1 !important;
+			font-weight: bold;
+		}
+		.abort {
+			color: #e11 !important;
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body onload="init();">
+	<div style="width: 100%; height: 100%; margin: 0 auto; text-align: center;">
+		<div id="fileInput" style="height: 200px; text-align: center; border: 2px black dotted">
+			<div id="text" style="line-height: 200px;">
+				Drop your midi here
+			</div>
+			<input id="file" type="file" accept="lss" style="margin-top: -200px;opacity: 0; width: 100%; height: 100%">
+		</div>
+		<!--div id="optiondiv">
+			<h2>Options</h2>
+			<form id="options">
+				<br>
+				<input id="repeat" type="checkbox">Repeat
+			</form>
+		</div>-->
+		<div id="status">
+			<p class="pending" id="s0">Receive file</p>
+			<p class="pending" id="s1">Parse file</p>
+			<p class="pending" id="s2">Read metadata</p>
+			<p class="pending" id="s3">Read splits</p>
+			<form onsubmit="downloadConverted();" style="display: block; margin: 10px;">
+				<input id="download" type="submit" value="Download" disabled>
+			</form>
+		</div>
+	</div>
+</body>
+</html>
