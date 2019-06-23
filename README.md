@@ -20,6 +20,10 @@ You can either use the touchscreen or the buttons for splitting, although I high
 
 A: start/split
 
+B: Undo split
+
+X: Skip split
+
 L+R: reset
 
 D-Pad Up/Down: scroll up/down in splits
