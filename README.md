@@ -3,7 +3,13 @@ A speedrunning timer for the (New) Nintendo 3DS (XL).
 
 ## How to use
 Download the 3DSplits.3dsx from the [releases](https://github.com/LetsPlentendo-CH/3DSplits/releases) and copy it to your /3ds/ folder on the SD card of your [homebrewed 3DS](https://3ds.guide).
-Launch the app from the homebrew launcher.
+
+### Adding splits
+If you have no splits on your PC, 3DSplits will create an empty split file which will not be saved to your SD card.
+If you use a different splitter than LiveSplit, you can upload the file to [splits.io](https://splits.io/) and click Export -> LiveSplit.
+Once you have a .lss file, drag it onto [this](https://letsplentendo-ch.github.io/3DSplits/converter/) page and download the splits.spl file, which you can rename to anything else (the ".spl" part must stay, otherwise 3DSplits won't recognize it).
+Navigate to your 3DS SD card and create/go into the folder named "splits" and copy the .spl file into there.
+Put your SD card back into the 3DS and launch the app from the homebrew launcher.
 Have fun!
 
 ## How to build
