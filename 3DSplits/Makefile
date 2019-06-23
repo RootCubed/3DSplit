@@ -41,8 +41,8 @@ GRAPHICS	:=	gfx
 ROMFS		:=	romfs
 GFXBUILD	:=	$(ROMFS)/gfx
 
-APP_TITLE		:=	SplitLive
-APP_DESCRIPTION	:=	Not LiveSplit, SplitLive.
+APP_TITLE		:=	3DSplits
+APP_DESCRIPTION	:=	A simple speedrunning timer for the Nintendo 3DS.
 APP_AUTHOR		:=	LetsPlentendo
 
 #---------------------------------------------------------------------------------
