@@ -73,7 +73,7 @@ static void sceneInit()
     if (d) {
         int i = 0;
         while ((dir = readdir(d)) != NULL) {
-            if (strstr(dir->d_name, ".sls") != NULL) {
+            if (strstr(dir->d_name, ".spl") != NULL) {
                 strcpy(splitFiles[i++], dir->d_name);
                 foundSplits = true;
             }

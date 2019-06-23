@@ -166,7 +166,7 @@ char* SL_Timer_GetDeltaText(Timer *t, int segment) {
     char *res = malloc(sizeof(char) * 256);
 
     if (segment == t->currSplit + 1) { // if current segment has passed gold, show it
-        if (t->state == STATE_RESET || osGetTime() - t->startTime - t->currSplits[segment] < t->goldSegments[segment] || t->goldSegments[segment] == 0) {
+        if (t->state == STATE_RESET || osGetTime() - t->startTime - t->currSplits[segment - 1] < t->goldSegments[segment] || t->goldSegments[segment] == 0) {
             strcpy(res, "");
             return res;
         }

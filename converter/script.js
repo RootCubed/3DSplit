@@ -121,6 +121,6 @@ function download(filename, text) {
 
 function downloadConverted() {
 	if (downloadable != undefined) {
-		download("splits.sls", downloadable);
+		download("splits.spl", downloadable);
 	}
 }
