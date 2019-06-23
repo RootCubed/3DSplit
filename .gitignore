@@ -1,7 +1,7 @@
-3DSplits/romfs/
-3DSplits/build/
+3DSplit/romfs/
+3DSplit/build/
 converter/.vscode/
-3DSplits/.vscode/
+3DSplit/.vscode/
 *.3dsx
 *.elf
 *.smdh

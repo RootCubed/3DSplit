@@ -197,22 +197,27 @@ char* SL_Timer_GetMainTimerText(Timer *t) {
 char* SL_Timer_GetDeltaText(Timer *t, int segment) {
     char *res = malloc(sizeof(char) * 256);
 
-    if (segment == t->currSplit + 1) { // if current segment has passed gold, show it
-        if (t->state == STATE_RESET || osGetTime() - t->startTime - t->currSplits[segment - 1] < t->goldSegments[segment] || t->goldSegments[segment] == 0) {
+    if (segment == t->currSplit + 1) {
+        if (t->state != STATE_RESET && // when running
+            (osGetTime() - t->startTime - t->currSplits[segment - 1] > t->goldSegments[segment] || // slower than gold or PB
+            osGetTime() - t->startTime > t->PBSplits[segment]) &&
+            t->PBSplits[segment] > 0 && // PB exists
+            t->goldSegments[segment] > 0) { // gold exists
+                u64 currTime = osGetTime() - t->startTime;
+                u64 segSplit;
+                if (currTime <= t->PBSplits[segment]) {
+                    segSplit = t->PBSplits[segment] - currTime;
+                    u64ToDelta(res, segSplit, false);
+                } else {
+                    segSplit = currTime - t->PBSplits[segment];
+                    u64ToDelta(res, segSplit, true);
+                }
+        } else {
             strcpy(res, "");
             return res;
         }
-        u64 currTime = osGetTime() - t->startTime;
-        u64 segSplit;
-        if (currTime <= t->PBSplits[segment]) {
-            segSplit = t->PBSplits[segment] - currTime;
-            u64ToDelta(res, segSplit, false);
-        } else {
-            segSplit = currTime - t->PBSplits[segment];
-            u64ToDelta(res, segSplit, true);
-        }
     } else if (segment <= t->currSplit + 1) {
-        if (t->PBSplits[segment] == 0) {
+        if (t->currSplits[segment] == 0) {
             strcpy(res, "- ");
         } else {
             u64 segSplit;
