@@ -71,7 +71,7 @@ void SL_Timer_Draw(Timer *t, C2D_TextBuf textBuf) {
                 else
                     color = GREEN_BETTER;
             }
-            if (currSegment < t->goldSegments[i]) {
+            if (currSegment < t->goldSegments[i] && t->currSplits[i - 1] > 0) {
                 color = GOLD;
             }
         }
@@ -167,7 +167,7 @@ void SL_Timer_Undo(Timer *t) {
 }
 
 void SL_Timer_Skip(Timer *t) {
-    if (t->state == STATE_RUNNING && t->currSplit < t->numSplits) {
+    if (t->state == STATE_RUNNING && t->currSplit < t->numSplits - 2) {
         t->currSplit++;
         t->currSplits[t->currSplit] = 0;
     }
