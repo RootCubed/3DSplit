@@ -33,8 +33,16 @@ D-Pad Up/Down: scroll up/down in splits
 ## How to build
 ### Prerequisites
 This project was made with the devkitpro, libctru and citro2d C libraries, so you will need to install [devkitpro](https://www.3dbrew.org/wiki/Setting_up_Development_Environment#Setup) before building.
-### Build
+### Build for homebrew launcher
 After setting up devkitpro, you can navigate to the /3DSplit/ folder and run `make`. Transfer the 3DSplit.3dsx file to your SD card and you're done!
+### Build for home menu (.cia)
+If you don't want to always go into the homebrew menu, create a .cia file by installing [cxitool](https://github.com/devkitPro/3dstools/tree/cxi-stuff) and [makerom](https://github.com/profi200/Project_CTR).
+Then do the steps as for building for homebrew launcher and run the following two commands (in the file where the compiled binaries are):
+`
+cxitool -n 3DSplit -b res/banner.bin 3DSplit.3dsx 3DSplit.cxi
+makerom -f cia -o 3DSplit.cia -target t -i 3DSplit.cxi:0:0
+`
+
 
 ## Thanks
 This project would not have been possible without the awesome 3DS modding community and the devkitpro/libctru/citro2d developers.

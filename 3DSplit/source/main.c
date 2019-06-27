@@ -221,8 +221,12 @@ int main(int argc, char* argv[])
 
         // Respond to user input
         u32 kDown = hidKeysDown();
+        u32 kHeld = hidKeysHeld();
+
         if (kDown & KEY_START) {
-            saveSplits(splitFiles[selectedFile]);
+            if (!isSelecting) {
+                saveSplits(splitFiles[selectedFile]);
+            }
             break;
         }
 
@@ -235,7 +239,7 @@ int main(int argc, char* argv[])
             }
         }
 
-        if (kDown & (KEY_L | KEY_R)) {
+        if (kHeld & KEY_L && kHeld & KEY_R) {
             SL_Timer_Reset(&mainTimer);
         }
 

@@ -33,6 +33,15 @@ void SL_Timer_Draw(Timer *t, C2D_TextBuf textBuf) {
     C2D_TextOptimize(&timerText);
     C2D_DrawText(&timerText, TEXT_DEFAULT, 400 - timerText.width, 235.0f, 0.0f, 1.0f, 1.0f, WHITE);
 
+    // sum of best
+    C2D_Text sobText;
+    char *sobTextStr = SL_Timer_GetSOBText(t);
+    C2D_TextBufClear(textBuf);
+    C2D_TextParse(&sobText, textBuf, sobTextStr);
+    free(sobTextStr);
+    C2D_TextOptimize(&sobText);
+    C2D_DrawText(&sobText, TEXT_DEFAULT, 0, 237.0f, 0.0f, 0.5f, 0.5f, WHITE);
+
     // draw splits
     int y = 15;
     for (int i = t->scroll; i < t->numSplits; i++) {
@@ -58,15 +67,15 @@ void SL_Timer_Draw(Timer *t, C2D_TextBuf textBuf) {
         long long currDelta = t->currSplits[i] - t->PBSplits[i];
         long long lastDelta = t->currSplits[i - 1] - t->PBSplits[i - 1];
         long long currSegment = t->currSplits[i] - t->currSplits[i - 1];
-        if (i < t->currSplit + 1) {
+        if (i < t->currSplit + 1 && strcmp(deltaTextStr, "- ")) {
             bool gotWorse = (currDelta > lastDelta);
             if (t->currSplits[i] >= t->PBSplits[i]) {
-                if (gotWorse)
+                if (gotWorse || t->currSplits[i - 1] == 0)
                     color = RED_WORSE;
                 else
                     color = RED_BETTER;
             } else {
-                if (gotWorse)
+                if (gotWorse || t->currSplits[i - 1] > 0)
                     color = GREEN_WORSE;
                 else
                     color = GREEN_BETTER;
@@ -151,8 +160,14 @@ void SL_Timer_Reset(Timer *t) {
         }
     }
     for (int i = 0; i < t->numSplits; i++) {
-        long long segment = t->currSplits[i + 1] - t->currSplits[i];
-        if (segment < t->goldSegments[i] && t->currSplits[i] > 0 && t->currSplits[i + 1] > 0) {
+        long long segment;
+        if (i == 0) {
+            // first segment is just first split
+            segment = t->currSplits[i];
+        } else {
+            segment = t->currSplits[i] - t->currSplits[i - 1];
+        }
+        if (t->goldSegments[i] == 0 || (segment < t->goldSegments[i] && t->currSplits[i] > 0 && (i == 0 || t->currSplits[i - 1] > 0))) {
             t->goldSegments[i] = segment;
         }
     }
@@ -201,6 +216,7 @@ char* SL_Timer_GetDeltaText(Timer *t, int segment) {
         if (t->state != STATE_RESET && // when running
             (osGetTime() - t->startTime - t->currSplits[segment - 1] > t->goldSegments[segment] || // slower than gold or PB
             osGetTime() - t->startTime > t->PBSplits[segment]) &&
+            t->currSplits[segment - 1] > 0 && // didn't skip last split
             t->PBSplits[segment] > 0 && // PB exists
             t->goldSegments[segment] > 0) { // gold exists
                 u64 currTime = osGetTime() - t->startTime;
@@ -217,7 +233,7 @@ char* SL_Timer_GetDeltaText(Timer *t, int segment) {
             return res;
         }
     } else if (segment <= t->currSplit + 1) {
-        if (t->currSplits[segment] == 0) {
+        if (t->currSplits[segment] == 0 || t->goldSegments[segment] == 0 || t->PBSplits[segment] == 0) {
             strcpy(res, "- ");
         } else {
             u64 segSplit;
@@ -254,6 +270,23 @@ char* SL_Timer_GetCurrSplitText(Timer *t, int segment) {
             strcpy(res, "- ");
         }
     }
+    return res;
+}
+
+char* SL_Timer_GetSOBText(Timer *t) {
+    char *res = malloc(sizeof(char) * 256);
+    u64 sob = 0;
+    for (int i = 0; i < t->numSplits; i++) {
+        if (t->goldSegments[i] == 0) {
+            sob = 0;
+            break;
+        }
+        sob += t->goldSegments[i];
+    }
+    char *sobText = malloc(sizeof(char) * 256);
+    u64ToTime(sobText, sob);
+    strcpy(res, "Sum of best: ");
+    strcat(res, sobText);
     return res;
 }
 

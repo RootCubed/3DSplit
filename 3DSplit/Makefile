@@ -40,7 +40,8 @@ GRAPHICS	:=	gfx
 #GFXBUILD	:=	$(BUILD)
 ROMFS		:=	romfs
 GFXBUILD	:=	$(ROMFS)/gfx
-ICON		:=	res/icon.png
+RES			:=	res
+ICON		:=	$(RES)/icon.png
 
 APP_TITLE		:=	3DSplit
 APP_DESCRIPTION	:=	A simple speedrunning timer for the Nintendo 3DS.

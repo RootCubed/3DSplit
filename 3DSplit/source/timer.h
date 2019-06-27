@@ -52,6 +52,8 @@ char* SL_Timer_GetDeltaText(Timer *t, int segment);
 
 char* SL_Timer_GetCurrSplitText(Timer *t, int segment);
 
+char* SL_Timer_GetSOBText(Timer *t);
+
 void u64ToDelta(char *str, u64 time, bool positive);
 
 void u64ToTime(char *str, u64 time);
