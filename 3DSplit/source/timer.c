@@ -287,6 +287,7 @@ char* SL_Timer_GetSOBText(Timer *t) {
     u64ToTime(sobText, sob);
     strcpy(res, "Sum of best: ");
     strcat(res, sobText);
+    free(sobText);
     return res;
 }
 
