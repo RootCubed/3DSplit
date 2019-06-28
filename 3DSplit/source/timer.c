@@ -67,7 +67,7 @@ void SL_Timer_Draw(Timer *t, C2D_TextBuf textBuf) {
         long long currDelta = t->currSplits[i] - t->PBSplits[i];
         long long lastDelta = t->currSplits[i - 1] - t->PBSplits[i - 1];
         long long currSegment = t->currSplits[i] - t->currSplits[i - 1];
-        if (i < t->currSplit + 1 && strcmp(deltaTextStr, "- ")) {
+        if (i < t->currSplit + 1 && strcmp(deltaTextStr, "- ") != 0) {
             bool gotWorse = (currDelta > lastDelta);
             if (t->currSplits[i] >= t->PBSplits[i]) {
                 if (gotWorse || t->currSplits[i - 1] == 0)
@@ -285,6 +285,9 @@ char* SL_Timer_GetSOBText(Timer *t) {
     }
     char *sobText = malloc(sizeof(char) * 256);
     u64ToTime(sobText, sob);
+    if (strcmp(sobText, "00:00.00") == 0) {
+        strcpy(sobText, "-");
+    }
     strcpy(res, "Sum of best: ");
     strcat(res, sobText);
     free(sobText);
