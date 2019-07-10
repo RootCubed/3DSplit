@@ -8,6 +8,8 @@
 
 #include "timer.h"
 
+#define VERSION_STRING "3DSplit v1.0.4"
+
 #define START_SPLIT_ICON 0
 #define RESET_ICON 1
 
@@ -315,6 +317,14 @@ int main(int argc, char* argv[])
             } else {
                 drawFiles(numFoundSplits, splitFiles, textBuf);
             }
+            C2D_TargetClear(top, C2D_Color32(0x00, 0x00, 0x00, 0xFF));
+            C2D_SceneBegin(top);
+            C2D_TextBufClear(textBuf);
+            C2D_Text version;
+            C2D_TextParse(&version, textBuf, VERSION_STRING);
+            C2D_TextOptimize(&version);
+            C2D_DrawText(&version, TEXT_DEFAULT, 200 - version.width / 2, 240 / 2, 0.0f, 1.0f, 1.0f, WHITE);
+
         } else {
             C2D_DrawSprite(&startSplitButton);
             C2D_DrawSprite(&resetButton);
