@@ -11,7 +11,7 @@ If you have no splits on your SD card, 3DSplit will create an empty split file w
 
 First, you need to find your LiveSplit splits (they should be .lss files). If you use a different splitter than LiveSplit, you can upload the file to [splits.io](https://splits.io/) and click Export -> LiveSplit.
 
-Once you have a .lss file, drag it onto [this](https://letsplentendo-ch.github.io/3DSplit/converter/) page and download the splits.spl file, which you can rename to anything else (the ".spl" part must stay, otherwise 3DSplit won't recognize it).
+Once you have a .lss file, drag it onto [this](https://rootcubed.github.io/3DSplit/converter/) page and download the splits.spl file, which you can rename to anything else (the ".spl" part must stay, otherwise 3DSplit won't recognize it).
 
 Navigate to your 3DS SD card and create/go into the folder named "splits" and copy the .spl file into there.
 Put your SD card back into the 3DS and launch the app from the homebrew launcher.
